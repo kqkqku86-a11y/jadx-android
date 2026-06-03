@@ -30,8 +30,6 @@ jobs:
 
       - name: Build
         run: ./gradlew dist distWin
-        env:
-          JADX_BUILD_JAVA_VERSION: 11
 
       - name: Save bundle artifact
         uses: actions/upload-artifact@v7
@@ -110,13 +108,9 @@ jobs:
 
       - name: Build Android App Debug
         run: ./gradlew :jadx-android-app:build
-        env:
-          JADX_BUILD_JAVA_VERSION: 11
 
       - name: Build Android App Release
         run: ./gradlew :jadx-android-app:assembleRelease
-        env:
-          JADX_BUILD_JAVA_VERSION: 11
 
       - name: Save Android Debug APK
         uses: actions/upload-artifact@v7
