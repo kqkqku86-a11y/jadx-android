@@ -11,6 +11,7 @@ rootProject.name = "jadx"
 include("jadx-core")
 include("jadx-cli")
 include("jadx-gui")
+include("jadx-android-app")
 
 include("jadx-plugins-tools")
 
