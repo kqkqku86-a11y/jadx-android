@@ -1,6 +1,7 @@
 name: Build Artifacts
 
 on:
+  workflow_dispatch: 
   push:
     branches: [ master, build-test ]
 
@@ -36,8 +37,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ${{ format('jadx-{0}', env.JADX_VERSION) }}
-          # Waiting fix for https://github.com/actions/upload-artifact/issues/39 to upload zip file
-          # Upload unpacked files for now
           path: build/jadx/**/*
           if-no-files-found: error
           retention-days: 14
@@ -46,7 +45,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ${{ format('jadx-gui-{0}-no-jre-win', env.JADX_VERSION) }}
-          # Upload unpacked files for now
           path: jadx-gui/build/jadx-gui-win/*
           if-no-files-found: error
           retention-days: 14
@@ -84,7 +82,62 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ${{ format('jadx-gui-{0}-with-jre-win', env.JADX_VERSION) }}
-          # Upload unpacked files for now
           path: jadx-gui/build/jadx-gui-with-jre-win/*
           if-no-files-found: error
+          retention-days: 14
+
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Set jadx version
+        run: |
+          JADX_REV=$(git rev-list --count HEAD)
+          JADX_VERSION="r${JADX_REV}.${GITHUB_SHA:0:7}"
+          echo "JADX_VERSION=$JADX_VERSION" >> $GITHUB_ENV
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Build Android App Debug
+        run: ./gradlew :jadx-android-app:build
+        env:
+          JADX_BUILD_JAVA_VERSION: 11
+
+      - name: Build Android App Release
+        run: ./gradlew :jadx-android-app:assembleRelease
+        env:
+          JADX_BUILD_JAVA_VERSION: 11
+
+      - name: Save Android Debug APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ format('jadx-{0}-debug.apk', env.JADX_VERSION) }}
+          path: jadx-android-app/build/outputs/apk/debug/jadx-android-app-debug.apk
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Save Android Release APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ format('jadx-{0}-release.apk', env.JADX_VERSION) }}
+          path: jadx-android-app/build/outputs/apk/release/jadx-android-app-release-unsigned.apk
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Save Android Bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ format('jadx-{0}.aab', env.JADX_VERSION) }}
+          path: jadx-android-app/build/outputs/bundle/release/jadx-android-app-release.aab
+          if-no-files-found: ignore
           retention-days: 14
