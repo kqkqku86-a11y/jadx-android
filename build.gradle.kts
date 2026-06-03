@@ -57,8 +57,9 @@ allprojects {
 	apply(plugin = "se.patrikerdes.use-latest-versions")
 
 	repositories {
-		mavenCentral()
-	}
+    google()
+    mavenCentral()
+    }
 
 	configure<SpotlessExtension> {
 		java {
