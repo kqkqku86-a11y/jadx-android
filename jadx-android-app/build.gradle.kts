@@ -8,6 +8,12 @@ android {
 	namespace = "com.jadx.app"
 	compileSdk = 35
 	
+	configurations {
+		all {
+			exclude(group = "com.android.tools.lint", module = "lint-gradle")
+		}
+	}
+	
 	defaultConfig {
 		applicationId = "com.jadx.app"
 		minSdk = 26
