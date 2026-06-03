@@ -48,7 +48,9 @@ fun getBuildChecksMode(): String {
 }
 
 allprojects {
-	apply(plugin = "java")
+    if (name != "jadx-android-app") {
+        apply(plugin = "java")
+    }
 	apply(plugin = "checkstyle")
 	apply(plugin = "com.diffplug.spotless")
 	apply(plugin = "com.github.ben-manes.versions")
