@@ -1,7 +1,6 @@
 plugins {
 	id("com.android.application")
 	id("kotlin-android")
-	id("jadx-java")
 }
 
 android {
@@ -49,7 +48,9 @@ android {
 	}
 	
 	kotlinOptions {
-		jvmTarget = "11"
+		compilerOptions {
+			jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+		}
 	}
 }
 
